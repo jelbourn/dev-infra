@@ -1,4 +1,4 @@
-import {
+import type {
   ClassEntry,
   ConstantEntry,
   DirectiveEntry,
@@ -10,7 +10,7 @@ import {
   MemberEntry,
   ParameterEntry,
   PipeEntry,
-} from '../entities';
+} from '@angular/compiler-cli';
 
 /** JsDoc tag info augmented with transformed content for rendering. */
 export interface JsDocTagRenderable extends JsDocTagEntry {

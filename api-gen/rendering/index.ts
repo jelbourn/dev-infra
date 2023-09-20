@@ -1,6 +1,6 @@
 import {readFileSync, writeFileSync} from 'fs';
-import path from 'path';
-import {DocEntry} from './entities';
+import {join} from 'path';
+import {DocEntry} from '@angular/compiler-cli';
 import {getRenderable} from './processing';
 import {renderEntry} from './rendering';
 
@@ -45,17 +45,17 @@ function main() {
       getRenderable(entry, collection.moduleName),
     );
 
-    const htmlOutputs = renderableEntries.map(renderEntry);
-
-    for (let i = 0; i < htmlOutputs.length; i++) {
-      const moduleName = collection.moduleName.replace(/@/g, '').replace(/\//g, '_');
-      const entryName = collection.entries[i].name;
-
-      const filename = `${moduleName}_${entryName}.html`;
-      writeFileSync(path.join(outputFilenameExecRootRelativePath, filename), htmlOutputs[i], {
-        encoding: 'utf8',
-      });
-    }
+    // const htmlOutputs = renderableEntries.map(renderEntry);
+    //
+    // for (let i = 0; i < htmlOutputs.length; i++) {
+    //   const moduleName = collection.moduleName.replace(/@/g, '').replace(/\//g, '_');
+    //   const entryName = collection.entries[i].name;
+    //
+    //   const filename = `${moduleName}_${entryName}.html`;
+    //   writeFileSync(join(outputFilenameExecRootRelativePath, filename), htmlOutputs[i], {
+    //     encoding: 'utf8',
+    //   });
+    // }
   }
 }
 
