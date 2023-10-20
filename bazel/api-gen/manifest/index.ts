@@ -3,7 +3,8 @@ import {readFileSync, writeFileSync} from 'fs';
 /** The JSON data file format for extracted API reference info. */
 interface EntryCollection {
   moduleName: string;
-  entries: {name: string; entryType: string}[];
+  // TODO(jelbourn): use the real type for DocEntry from @angular/compiler-cli.
+  entries: {name: string; entryType: string; jsdocTags: Array<{name: string}>}[];
 }
 
 export interface ManifestEntry {
@@ -22,10 +23,24 @@ function main() {
     .map((srcPath) => readFileSync(srcPath, {encoding: 'utf8'}));
   const apiCollections = sourceContents.map((s) => JSON.parse(s) as EntryCollection);
 
+  // Filter out repeated entries for function overloads.
+  for (const collection of apiCollections) {
+    const seen = new Set<string>();
+    collection.entries = collection.entries.filter((entry) => {
+      if (seen.has(entry.name)) return false;
+      seen.add(entry.name);
+      return true;
+    });
+  }
+
   const manifest: Manifest = apiCollections.reduce((result, collection) => {
     return {
       ...result,
-      [collection.moduleName]: collection.entries.map((e) => ({name: e.name, type: e.entryType})),
+      [collection.moduleName]: collection.entries.map((entry) => ({
+        name: entry.name,
+        type: entry.entryType,
+        isDeprecated: entry.jsdocTags.some((t) => t.name === 'deprecated'),
+      })),
     };
   }, {});
 
